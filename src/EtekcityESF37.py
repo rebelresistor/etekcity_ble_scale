@@ -274,9 +274,12 @@ if __name__ == '__main__':
 		write_service(name=SERVICE_NAME, 
 					  python_path=f'{__file__} --daemon',
 					  log_dir=LOG_FOLDER)
+		enable_service(name=SERVICE_NAME)
+		daemon_reload()
 		load_service(name=SERVICE_NAME)
 	elif args.remove:
 		unload_service(name=SERVICE_NAME)
 		remove_service(name=SERVICE_NAME)
 		daemon_reload()
+
 	

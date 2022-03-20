@@ -9,6 +9,7 @@ __all__ = [
 	'write_service',
 	'remove_service',
 	'load_service',
+	'enable_service',
 	'unload_service',
 	'daemon_reload'
 ]
@@ -18,13 +19,13 @@ __all__ = [
 TEMPLATE = '''
 [Unit]
 Description={name}
-After=network-online.target bluetooth.service
+After=bluetooth.target
 
 [Service]
 ExecStart=/usr/bin/python {py_path}
 WorkingDirectory={log_dir}
 Environment=PYTHONUNBUFFERED=1
-StandardOutput=inherit
+StandardOutput=journal
 StandardError=journal
 Restart=always
 User=pi
@@ -65,10 +66,19 @@ def remove_service(name):
 		raise
 
 
+def enable_service(name):
+	'''Load the given service name'''
+	service_name = os.path.basename(build_systemd_service_path(name))
+	try:
+		subprocess.run(['systemctl', 'enable', service_name])
+	except subprocess.CalledProcessError:
+		log.error('Error while loading the service into systemd:\n', exc_info=True)
+
 def load_service(name):
 	'''Load the given service name'''
 	service_name = os.path.basename(build_systemd_service_path(name))
 	try:
+		subprocess.run(['systemctl', 'enable', service_name])
 		subprocess.run(['systemctl', 'start', service_name])
 	except subprocess.CalledProcessError:
 		log.error('Error while loading the service into systemd:\n', exc_info=True)
