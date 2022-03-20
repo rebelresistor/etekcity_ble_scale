@@ -15,7 +15,9 @@ __all__ = [
 ]
 
 
-
+# this still doesn't work great, the service is getting started before BT is 
+# available. The 10 second wait between restarts is what saves us. Need to 
+# investigate this further at a later date.
 TEMPLATE = '''
 [Unit]
 Description={name}
@@ -28,6 +30,7 @@ Environment=PYTHONUNBUFFERED=1
 StandardOutput=journal
 StandardError=journal
 Restart=always
+RestartSec=10
 User=pi
 
 [Install]
